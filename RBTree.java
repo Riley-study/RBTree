@@ -41,9 +41,50 @@ public class RBTree {
                 }
             }
         }
-
+        return false;
     }
 
+    // Разбалансировка дерева может произойти в трех случаях: 1 - когда у черного узла два красных ребенка,
+    // 2 - когда у черного узла правый ребенок красного цвета,
+    // 3- когда у красного узла есть ребенок красного цвета. Ниже прописано три метода, которые будут
+    // использоваться в общем методе балансировки (смена цвета, правосторонний разворот, левосторонний разворот).
+
+
+    // 1. Метод смены цвета меняет цвета детей на черный, а анализиуемый узел делает красным.
+    private void colorSwap (Node node){
+        node.leftChild.color = Color.BLACK;
+        node.rightChild.color = Color.BLACK;
+        node.color = Color.RED;
+    }
+
+    // 2. Метод правостороннего разворота. Метод меняет местами правого красного ребенка с анализируемым черным узлом.
+    // При этом анализируемый узел становится красным левым ребенком, а бывший левый внук от правого ребенка становится
+    // его правым ребенком.
+    private Node rightSwap (Node node){
+        Node rightChild = node.rightChild;
+        Node betweenChild = rightChild.leftChild;       // левый внук от правого ребенка, который поменяет родителя
+        rightChild.leftChild = node;                    // анализируемый элемент меняется местами со своим правым
+                                                        // ребенком и становится его левым ребенком
+        node.rightChild = betweenChild;                 // левый внук становится правым ребенком анализ. элемента
+        rightChild.color = node.color;                  // новый родитель перенимает цвет старого
+        node.color = Color.RED;                         // новый левый ребенок становится красным
+        return rightChild;
+    }
+
+    // 3. Метод левостороннего разворота. Данный метод обратный правостороннему развороту.
+
+    private Node leftSwap (Node node){
+        Node leftChild = node.leftChild;
+        Node betweenChild = leftChild.rightChild;
+        leftChild.rightChild = node;
+        node.leftChild = betweenChild;
+        leftChild.color = node.color;
+        node.color = Color.RED;
+        return leftChild;
+    }
+
+
     private Node rebalance(Node leftChild) {
+
     }
 }
