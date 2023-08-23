@@ -44,8 +44,8 @@ public class RBTree {
         return false;
     }
 
-    // Разбалансировка дерева может произойти в трех случаях: 1 - когда у черного узла два красных ребенка,
-    // 2 - когда у черного узла правый ребенок красного цвета,
+    // Разбалансировка дерева может произойти в трех случаях: 1 - когда у черного узла два красных ребенка;
+    // 2 - когда у черного узла правый ребенок красного цвета, а левого либо нет, либо он черный;
     // 3- когда у красного узла есть ребенок красного цвета. Ниже прописано три метода, которые будут
     // использоваться в общем методе балансировки (смена цвета, правосторонний разворот, левосторонний разворот).
 
@@ -83,8 +83,42 @@ public class RBTree {
         return leftChild;
     }
 
-
-    private Node rebalance(Node leftChild) {
-
+// Метод ребалансировки будет срабатывать, если произойдут описанные выше три случая разбалансировки.
+// Выполняем метод до тех пор, пока дерево не будет сбалансировано.
+    private Node rebalance(Node node) {
+        Node result = node;
+        boolean needRebalance;
+        do {
+            needRebalance = false;
+            // Если у анализируемого элемента есть красный правый ребенок, а левого либо нет, либо он черный, включаем
+            // флаг и делаем правосторонний разворот
+            if (result.rightChild != null &&
+                    result.rightChild.color == Color.RED &&
+                    (result.leftChild == null ||
+                    result.leftChild.color == Color.BLACK)){
+                needRebalance = true;
+                result = rightSwap(result);
+            }
+            // Если у анализируемого элемента есть красный левый ребенок и красный левый внук, включаем флаг
+            // и делаем левостоонний поворот
+            if (result.leftChild != null &&
+                    result.leftChild.color == Color.RED &&
+                    result.leftChild.leftChild != null &&
+                    result.leftChild.leftChild.color == Color.RED){
+                needRebalance = true;
+                result = leftSwap(result);
+            }
+            // Если оба ребенка красные, включаем флаг и меняем цвета у детей и родителя.
+            if (result.leftChild != null &&
+                    result.leftChild.color == Color.RED &&
+                    result.rightChild != null &&
+                    result.rightChild.color == Color.RED){
+                needRebalance = true;
+                colorSwap(result);
+            }
+        }
+        // Пока выполняется одно из трех условий и включен флаг, дерево не сбалансировано, цикл перезапустится.
+        while (needRebalance);
+        return result;
     }
 }
