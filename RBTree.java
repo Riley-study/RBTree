@@ -148,7 +148,7 @@ public class RBTree {
         if (node != null){
 
             pintTree(node.leftChild);
-            System.out.print(node.value + " ");
+            System.out.println(node.toString() + " ");
             pintTree(node.rightChild);
 
         }

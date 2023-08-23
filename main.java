@@ -7,8 +7,7 @@ public class main {
         tree1.add(100);
         tree1.add(2);
         tree1.add(22);
-        tree1.add(0);
-        tree1.add(77);
+
 
         tree1.pintTree(tree1.root);
 
