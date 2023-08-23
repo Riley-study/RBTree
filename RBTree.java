@@ -1,5 +1,5 @@
 public class RBTree {
-    private Node root;
+    public Node root;
 
     // Метод, поверяющий наличие корневого элемента. Если его нет, то добавляет его. Если корневой элемент уже существует,
     // запускает метод addNode, балансирует, делает корневой элемент черным.
@@ -139,4 +139,19 @@ public class RBTree {
         while (needRebalance);
         return result;
     }
+
+    //
+    public void pintTree (Node node){
+        if (node == null){
+            return;
+        }
+        if (node != null){
+
+            pintTree(node.leftChild);
+            System.out.print(node.value + " ");
+            pintTree(node.rightChild);
+
+        }
+    }
+
 }
