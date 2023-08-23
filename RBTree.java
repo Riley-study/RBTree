@@ -1,6 +1,24 @@
 public class RBTree {
     private Node root;
-    public boolean addNote (Node node, int value){
+
+    // Метод, поверяющий наличие корневого элемента. Если его нет, то добавляет его. Если корневой элемент уже существует,
+    // запускает метод addNode, балансирует, делает корневой элемент черным.
+    public boolean add(int value){
+        if (root != null){
+            boolean result = addNode(root, value);
+            root = rebalance(root);
+            root.color = Color.BLACK;
+            return result;
+        } else {
+            root = new Node();
+            root.color = Color.BLACK;
+            root.value = value;
+            return true;
+        }
+    }
+
+    // Приватный метод addNode проверяет уникальность и ищет подходящее место для добавления элемента.
+    private boolean addNode (Node node, int value){
         // Красно-черное дерево является частным случаем бинарного дерева. Одна из особенностей бинарного дерева
         // в том, что все значения должны быть уникальными. Поэтому, если добавляемый узел уже существует, метод
         // возвращает false, создать новое такое же значение будет нельзя.
@@ -10,11 +28,11 @@ public class RBTree {
         } else {
         //  Далее проверяем, если значение в проверяемом узле больше искомого значения, алгоритм начинает
         //  обходить левую часть дерева рекурсивно проваливаясь ниже, чтобы найти свободное место для вставки нового
-        //  элемента и убедиться в отсутствии дублирования значений в дереве. При выходе из рекусии в случае
+        //  элемента и убедиться в отсутствии дублирования значений в дереве. При выходе из рекурсии в случае
         //  разбалансировки дерева включается метод rebalance.
             if (node.value > value) {
                 if (node.leftChild != null) {
-                    boolean result = addNote(node.leftChild, value);
+                    boolean result = addNode(node.leftChild, value);
                     node.leftChild = rebalance(node.leftChild);
                     return result;
                 } else {
@@ -28,11 +46,12 @@ public class RBTree {
             } else {
             // В оставшемся случае, когда значение нового узла больше проверяемого, алгоритм проходит к анализу
             // правого ребенка аналогичным образом. Когда у анализируемого узла нет правого ребенка, создаем новый
-            // красный узел, присваеваем ему нужное значение. За счет рекурсии алгоритм каждый раз идет по дереву
-            // в соответствующее место в зависимости отзначения добавляемого элемента
+            // красный узел, присваиваем ему нужное значение. За счет рекурсии алгоритм каждый раз идет по дереву
+            // в соответствующее место в зависимости от значения добавляемого элемента
                 if (node.rightChild != null){
-                    boolean result = addNote(node.rightChild, value);
+                    boolean result = addNode(node.rightChild, value);
                     node.rightChild = rebalance(node.rightChild);
+                    return result;
                 } else {
                     node.rightChild = new Node();
                     node.rightChild.color = Color.RED;
@@ -41,7 +60,6 @@ public class RBTree {
                 }
             }
         }
-        return false;
     }
 
     // Разбалансировка дерева может произойти в трех случаях: 1 - когда у черного узла два красных ребенка;
@@ -50,7 +68,7 @@ public class RBTree {
     // использоваться в общем методе балансировки (смена цвета, правосторонний разворот, левосторонний разворот).
 
 
-    // 1. Метод смены цвета меняет цвета детей на черный, а анализиуемый узел делает красным.
+    // 1. Метод смены цвета меняет цвета детей на черный, а анализируемый узел делает красным.
     private void colorSwap (Node node){
         node.leftChild.color = Color.BLACK;
         node.rightChild.color = Color.BLACK;
@@ -65,7 +83,7 @@ public class RBTree {
         Node betweenChild = rightChild.leftChild;       // левый внук от правого ребенка, который поменяет родителя
         rightChild.leftChild = node;                    // анализируемый элемент меняется местами со своим правым
                                                         // ребенком и становится его левым ребенком
-        node.rightChild = betweenChild;                 // левый внук становится правым ребенком анализ. элемента
+        node.rightChild = betweenChild;                 // левый внук становится правым ребенком анализируемого элемента
         rightChild.color = node.color;                  // новый родитель перенимает цвет старого
         node.color = Color.RED;                         // новый левый ребенок становится красным
         return rightChild;
@@ -83,7 +101,7 @@ public class RBTree {
         return leftChild;
     }
 
-// Метод ребалансировки будет срабатывать, если произойдут описанные выше три случая разбалансировки.
+// Метод ребалансировки будет срабатывать, если произойдут описанные выше три случая расбалансировки.
 // Выполняем метод до тех пор, пока дерево не будет сбалансировано.
     private Node rebalance(Node node) {
         Node result = node;
@@ -100,7 +118,7 @@ public class RBTree {
                 result = rightSwap(result);
             }
             // Если у анализируемого элемента есть красный левый ребенок и красный левый внук, включаем флаг
-            // и делаем левостоонний поворот
+            // и делаем левосторонний поворот
             if (result.leftChild != null &&
                     result.leftChild.color == Color.RED &&
                     result.leftChild.leftChild != null &&
